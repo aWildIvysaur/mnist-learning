@@ -13,31 +13,41 @@ class Window(QtWidgets.QMainWindow):
         super().__init__()
 
         self.setWindowTitle("GUI")
-        self.setFixedSize(QSize(280, 280))
+        self.scale = 15
+        self.grid = [[0 for _ in range(28)] for _ in range(28)]
+        self.paint = 1
+        self.setFixedSize(QSize(28 * self.scale, 28 * self.scale))
         self.label = QtWidgets.QLabel()
-        canvas = QPixmap(280, 280)
+        canvas = QPixmap(28 * self.scale, 28 * self.scale)
         canvas.fill(Qt.GlobalColor.white)
         self.label.setPixmap(canvas)
         self.setCentralWidget(self.label)
 
     def mouseMoveEvent(self, a0: QMouseEvent) -> None:
         """Draw on canvas when mouse is moved while clicking"""
+
         canvas = self.label.pixmap()
         painter = QPainter(canvas)
-        print(a0.buttons())
         if a0.buttons() == Qt.MouseButton.LeftButton:
             painter.setBrush(QBrush(Qt.BrushStyle.SolidPattern))
             painter.setPen(Qt.GlobalColor.black)
             painter.setBrush(Qt.GlobalColor.black)
+            self.paint = 1
         else:
-
             painter.setBrush(QBrush(Qt.BrushStyle.SolidPattern))
             painter.setPen(Qt.GlobalColor.white)
             painter.setBrush(Qt.GlobalColor.white)
+            self.paint = 0
 
         x = int(a0.position().x())
         y = int(a0.position().y())
-        painter.drawEllipse(x - 2, y - 2, 4, 4)
+        smallx = int(x / self.scale)
+        smally = int(y / self.scale)
+        painter.drawRect(
+            smallx * self.scale, smally * self.scale, self.scale - 1, self.scale - 1
+        )
+        if smallx in range(0, 28) and smally in range(0, 28):
+            self.grid[smallx][smally] = self.paint
         painter.end()
         self.label.setPixmap(canvas)
 
