@@ -3,19 +3,23 @@ Docstring for gui
 """
 
 import sys
-import model
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QPainter, QBrush, QPixmap, QMouseEvent
+import model
 
 
 class Window(QtWidgets.QMainWindow):
+    """
+    Qt MainWindow child that draws when clicked
+    """
+
     def __init__(self):
         super().__init__()
 
         self.scale = 15
         self.grid = [[0 for _ in range(28)] for _ in range(28)]
-        self.paint = 1
+        self.paint = 0
         self.trained_model = model.train_mnist()
 
         self.setWindowTitle("GUI")
@@ -27,7 +31,12 @@ class Window(QtWidgets.QMainWindow):
         self.setCentralWidget(self.label)
 
     def mouseMoveEvent(self, a0: QMouseEvent) -> None:
-        """Qt built in method that triggers when mouse is clicked and moved"""
+        """
+        Qt built in method that triggers when mouse is clicked and moved
+
+        :param a0: Qt mouse event passed when window is clicked
+        :type a0: QMouseEvent
+        """
         if self.draw(a0):
 
             image = model.flatten_data([self.grid])
@@ -37,12 +46,15 @@ class Window(QtWidgets.QMainWindow):
     def draw(self, a0: QMouseEvent) -> bool:
         """
         Draw on canvas when mouse is moved while clicking
-        Return Value: whether the grid changed or not
+
+        :return: Whether the grid changed or not
+        :rtype: bool
         """
 
         painted = False
         canvas = self.label.pixmap()
         painter = QPainter(canvas)
+        # Brush selection based on button clicked
         if a0.buttons() == Qt.MouseButton.LeftButton:
             painter.setBrush(QBrush(Qt.BrushStyle.SolidPattern))
             painter.setPen(Qt.GlobalColor.black)
@@ -56,7 +68,7 @@ class Window(QtWidgets.QMainWindow):
 
         x = int(a0.position().x())
         y = int(a0.position().y())
-        smallx = int(x / self.scale)
+        smallx = int(x / self.scale)  # convert to 28x28 grid coords
         smally = int(y / self.scale)
         painter.drawRect(
             smallx * self.scale, smally * self.scale, self.scale - 1, self.scale - 1
@@ -70,12 +82,14 @@ class Window(QtWidgets.QMainWindow):
         return painted
 
 
-def start_window() -> Window:
+def start_window() -> None:
+    """
+    Starts UI
+    """
     app = QtWidgets.QApplication(sys.argv)
     window = Window()
     window.show()
     app.exec()
-    return window
 
 
 if __name__ == "__main__":

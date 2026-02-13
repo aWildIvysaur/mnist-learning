@@ -11,7 +11,14 @@ from numpy.typing import NDArray
 
 
 def flatten_data(data: Any) -> NDArray[Any]:
-    """flattens 3D tuple into 2D numpy array"""
+    """
+    Flattens 3D tuple into 2D numpy array
+
+    :param data: list of 2d arrays of grayscale pixel values
+    :type data: list[list[list[int]]]
+    :return: Flattened data for ML
+    :rtype: NDArray
+    """
     data_array = numpy.asarray(data)
     samples, x, y = data_array.shape
     new_data = data_array.reshape((samples, x * y))
@@ -24,6 +31,17 @@ def train(
 ) -> RandomForestClassifier:
     """
     Trains and tests a model using random forest classification with 500 estimators
+
+    :param data: Flattened training data
+    :type data: NDArray
+    :param awns: Awnsers for training data
+    :type awns: tuple[int]
+    :param test_data: Flattened testing data
+    :type test_data: NDArray
+    :param test_awns: Awnsers for testing data
+    :type test_awns: tuple[int]
+    :return: Trained model
+    :rtype: RandomForestClassifier
     """
     # 500 Forest (~0.9712)
     forest_model = RandomForestClassifier(n_estimators=500, n_jobs=6, verbose=False)
@@ -35,6 +53,13 @@ def train(
 
 
 def train_mnist() -> RandomForestClassifier:
+    """
+    Trains and tests a model using random forest classification with 500 estimators
+    Uses keras mnist data
+
+    :return: Trained model
+    :rtype: RandomForestClassifier
+    """
     (train_data, train_awns), (test_data, test_awns) = mnist.load_data(path="mnist.npz")
     trained_model = train(
         flatten_data(train_data), train_awns, flatten_data(test_data), test_awns
