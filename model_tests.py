@@ -1,5 +1,5 @@
 """
-Docstring for main
+Docstring for model_tests
 """
 
 from typing import Any
@@ -13,6 +13,7 @@ from numpy.typing import NDArray
 (train_data, train_awns), (test_data, test_awns) = keras.datasets.mnist.load_data(
     path="mnist.npz"
 )
+print(test_awns)
 
 
 def flatten_data(data: tuple[int, int]) -> NDArray[Any]:
